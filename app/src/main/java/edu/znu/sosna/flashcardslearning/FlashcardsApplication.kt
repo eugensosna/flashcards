@@ -5,12 +5,18 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.CreationExtras
 import edu.znu.sosna.flashcardslearning.data.FlashcardsDatabase
 import edu.znu.sosna.flashcardslearning.data.FlashcardsRepository
+import edu.znu.sosna.flashcardslearning.data.InMemoryFlashcardsRepository
+import edu.znu.sosna.flashcardslearning.data.RoomFlashcardsRepository
 
 /** Holds app-wide singletons (simple manual DI). */
 class FlashcardsApplication : Application() {
-    val repository: FlashcardsRepository by lazy {
+    // In-memory fake data for demos; swap for createRoomRepository() to persist to the database.
+    val repository: FlashcardsRepository by lazy { InMemoryFlashcardsRepository() }
+
+    @Suppress("unused")
+    private fun createRoomRepository(): FlashcardsRepository {
         val db = FlashcardsDatabase.create(this)
-        FlashcardsRepository(db.deckDao(), db.cardDao())
+        return RoomFlashcardsRepository(db.deckDao(), db.cardDao())
     }
 }
 
