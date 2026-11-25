@@ -1,7 +1,9 @@
 package edu.znu.sosna.flashcardslearning.ui.cards
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -18,6 +20,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -50,16 +53,13 @@ fun CardEditScreen(
     ) { padding ->
         if (state.isLoading) return@Scaffold
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .imePadding()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            val questionError = state.showErrors && !state.isQuestionValid
+        val isLandscape =
+            LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+        val questionError = state.showErrors && !state.isQuestionValid
+        val answerError = state.showErrors && !state.isAnswerValid
+
+        val questionField: @Composable () -> Unit = {
             OutlinedTextField(
                 value = state.question,
                 onValueChange = viewModel::onQuestionChange,
@@ -71,8 +71,8 @@ fun CardEditScreen(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 modifier = Modifier.fillMaxWidth(),
             )
-
-            val answerError = state.showErrors && !state.isAnswerValid
+        }
+        val answerField: @Composable () -> Unit = {
             OutlinedTextField(
                 value = state.answer,
                 onValueChange = viewModel::onAnswerChange,
@@ -84,6 +84,31 @@ fun CardEditScreen(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 modifier = Modifier.fillMaxWidth(),
             )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .imePadding()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            // Landscape has extra horizontal space, so the two main fields sit side by side
+            // instead of stacking, keeping both on screen above the fold.
+            if (isLandscape) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Column(Modifier.weight(1f)) { questionField() }
+                    Column(Modifier.weight(1f)) { answerField() }
+                }
+            } else {
+                questionField()
+                answerField()
+            }
 
             OutlinedTextField(
                 value = state.tags,
