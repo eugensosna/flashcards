@@ -4,7 +4,13 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
 
+/**
+ * Passed to the card edit screen as a navigation argument.
+ * Not Parcelable: [edu.znu.sosna.flashcardslearning.ui.navigation.CardNavType] stores it in the Bundle as a JSON string.
+ */
+@Serializable
 @Entity(
     tableName = "cards",
     foreignKeys = [

@@ -27,13 +27,16 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.znu.sosna.flashcardslearning.R
+import edu.znu.sosna.flashcardslearning.data.Card
 import edu.znu.sosna.flashcardslearning.ui.components.BackButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardEditScreen(
+    deckId: Long,
+    card: Card?,
     onDone: () -> Unit,
-    viewModel: CardEditViewModel = viewModel(factory = CardEditViewModel.Factory),
+    viewModel: CardEditViewModel = viewModel(factory = CardEditViewModel.factory(deckId, card)),
 ) {
     val state = viewModel.uiState
 
@@ -51,8 +54,6 @@ fun CardEditScreen(
             )
         },
     ) { padding ->
-        if (state.isLoading) return@Scaffold
-
         val isLandscape =
             LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 

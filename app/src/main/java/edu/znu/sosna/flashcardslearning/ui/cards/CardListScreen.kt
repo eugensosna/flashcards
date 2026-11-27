@@ -42,8 +42,8 @@ import edu.znu.sosna.flashcardslearning.ui.components.EmptyState
 @Composable
 fun CardListScreen(
     onBack: () -> Unit,
-    onAddCard: () -> Unit,
-    onCardClick: (Long) -> Unit,
+    onAddCard: (deckId: Long) -> Unit,
+    onCardClick: (Card) -> Unit,
     viewModel: CardListViewModel = viewModel(factory = CardListViewModel.Factory),
 ) {
     val deck by viewModel.deck.collectAsStateWithLifecycle()
@@ -58,7 +58,7 @@ fun CardListScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = onAddCard) {
+            FloatingActionButton(onClick = { onAddCard(viewModel.deckId) }) {
                 Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(R.string.card_add))
             }
         },
@@ -79,7 +79,7 @@ fun CardListScreen(
                 items(list, key = { it.id }) { card ->
                     CardItem(
                         card = card,
-                        onClick = { onCardClick(card.id) },
+                        onClick = { onCardClick(card) },
                         onDelete = { cardToDelete = card },
                     )
                 }

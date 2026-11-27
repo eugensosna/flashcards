@@ -45,7 +45,7 @@ import edu.znu.sosna.flashcardslearning.ui.components.EmptyState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeckListScreen(
-    onDeckClick: (Long) -> Unit,
+    onDeckClick: (Deck) -> Unit,
     viewModel: DeckListViewModel = viewModel(factory = DeckListViewModel.Factory),
 ) {
     val decks by viewModel.decks.collectAsStateWithLifecycle()
@@ -76,7 +76,7 @@ fun DeckListScreen(
                 items(list, key = { it.deck.id }) { item ->
                     DeckItem(
                         item = item,
-                        onClick = { onDeckClick(item.deck.id) },
+                        onClick = { onDeckClick(item.deck) },
                         onDelete = { deckToDelete = item.deck },
                     )
                 }
